@@ -3,6 +3,7 @@ RUN apk add --no-cache --update git
 RUN mkdir -p /go/src/github.com/diegopereiraeng/commit-insights
 WORKDIR /go/src/github.com/diegopereiraeng/commit-insights 
 COPY *.go ./
+COPY internal ./internal
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 

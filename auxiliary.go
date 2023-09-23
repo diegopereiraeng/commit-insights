@@ -1,0 +1,352 @@
+package main
+
+import (
+	"fmt"
+	"html/template"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/joho/godotenv"
+)
+
+const htmlHeader = `
+<html>
+<head>
+    <style>
+`
+
+const htmlStyle = `
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			background-color: #f0f0f0;
+		}
+		.header {
+			background-color: #0B5ED7; 
+			color: white; 
+			padding: 20px; 
+			text-align: center; 
+			font-size: 24px;
+			border-bottom: 2px solid #fff;
+		} 
+		.section {
+			padding: 20px;
+			background-color: #fff;
+			margin: 10px 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		}
+		.green {
+			background-color: rgba(40, 167, 69, 0.3);
+		}
+		.red {
+			background-color: rgba(203, 36, 49, 0.3);
+		}
+		.orange {
+			background-color: rgba(255, 165, 0, 0.3);
+		}
+		table {
+			width: 100%; 
+			border-collapse: collapse; 
+			margin-bottom: 20px;
+		}
+		th, td {
+			border: 1px solid #ccc; 
+			padding: 8px; 
+			text-align: left; 
+		}
+		th {
+			background-color: #f8f8f8;
+		}
+`
+
+const htmlPreBody = `
+	</style>
+</head>
+<body>
+`
+const htmlBody = `
+	<div class="header">
+		Commit Insights Report
+	</div>
+	<div class="section">
+		<strong>Repository Name:</strong> {{.RepoName}}<br>
+		<strong>Branch Name:</strong> {{.BranchName}}<br>
+		<strong>Trigger Type:</strong> {{.TriggerType}}
+	</div>
+	<div class="section">
+		<strong>Committers:</strong> {{.Committers}}
+	</div>
+	<div class="section">
+		<strong>Pipeline Name:</strong> {{.PipeName}}<br>
+		<strong>Pipeline Build Started:</strong> {{.PipeBuildCreated}}<br>
+		<strong>Pipeline URL:</strong> <a href={{.PipeURL}}>Harness Execution Link</a>
+	</div>
+	<div class="section">
+		<strong>File Changes:</strong>
+		<table>
+			<tr>
+				<th>Committer/Reviewer</th>
+				<th>Status</th>
+				<th>File Name</th>
+				<th>Commit Hash</th>
+				<th>Title</th>
+				<th>Date</th>
+			</tr>
+			{{range .FileChanges}}
+			<tr class="{{.StatusClass}}">
+				<td>{{.Committer}}{{if .Reviewer}} / {{.Reviewer}}{{end}}</td>
+				<td>{{.Status}}</td>
+				<td>{{.FileName}}</td>
+				<td>{{.CommitHash}}</td>
+				<td>{{.Title}}</td>
+				<td>{{.Time}}</td>
+			</tr>
+			{{end}}
+		</table>
+	</div>
+`
+const htmlPostBody = `
+</body>
+</html>
+`
+
+const htmlTemplate = htmlHeader + htmlStyle + htmlPreBody + htmlBody + htmlPostBody
+
+type reportData struct {
+	RepoName         string
+	BranchName       string
+	TriggerType      string
+	Committers       string
+	PipeName         string
+	PipeURL          string
+	PipeBuildCreated string
+	FileChanges      []struct {
+		FileName    string
+		Status      string
+		StatusClass string
+		Committer   string
+		Reviewer    string
+		CommitHash  string
+		Title       string
+		Time        string
+	}
+}
+
+func GenerateReport(repoName string, branchName string, triggerType string, committers []string, pipeName string, pipeURL string, fileChanges []struct {
+	FileName   template.HTML
+	Status     string
+	Committer  string
+	Reviewer   string
+	CommitHash string
+	Title      string
+	Time       string
+}, buildCreated string) (string, error) {
+	var committersStr string
+	if len(committers) > 0 {
+		committersStr = strings.Join(committers, ", ")
+	}
+
+	var fileChangesData []struct {
+		FileName    template.HTML
+		Status      string
+		StatusClass string
+		Committer   string
+		Reviewer    string
+		CommitHash  string
+		Title       string
+		Time        time.Time
+	}
+	for _, change := range fileChanges {
+		var statusText, statusClass string
+		switch change.Status {
+		case "A":
+			statusText = "Added"
+			statusClass = "green"
+		case "M":
+			statusText = "Modified"
+			statusClass = "orange"
+		case "D":
+			statusText = "Deleted"
+			statusClass = "red"
+		default:
+			statusText = "Unknown"
+		}
+		//convert epoch 1694299436 format to human readable format
+		// timeInt, err := strconv.Atoi(change.Time)
+		// if err != nil {
+		// 	return "", err
+		// }
+		// currentTimezone := time.Now().Format("-0700")
+		// // fmt.Println(currentTimezone)
+
+		// date := time.Unix(int64(timeInt), 0).Format("2006-01-02 15:04:05") + " " + currentTimezone
+		// _ = date // fix "declared and not used" error
+		timeInt, err := strconv.Atoi(change.Time)
+		if err != nil {
+			return "", err
+		}
+		date := time.Unix(int64(timeInt), 0)
+		_, offsetSeconds := time.Now().Zone()
+		offset := time.Duration(offsetSeconds) * time.Second
+		date = date.Add(offset)
+
+		fileChangesData = append(fileChangesData, struct {
+			FileName    template.HTML
+			Status      string
+			StatusClass string
+			Committer   string
+			Reviewer    string
+			CommitHash  string
+			Title       string
+			Time        time.Time
+		}{
+			FileName:    change.FileName,
+			Status:      statusText,
+			StatusClass: statusClass,
+			Committer:   change.Committer,
+			Reviewer:    change.Reviewer,
+			CommitHash:  change.CommitHash,
+			Title:       change.Title,
+			Time:        date,
+		})
+	}
+
+	sort.Slice(fileChangesData, func(i, j int) bool {
+		return fileChangesData[i].Time.After(fileChangesData[j].Time)
+	})
+
+	data := reportData{
+		RepoName:         repoName,
+		BranchName:       branchName,
+		TriggerType:      triggerType,
+		Committers:       committersStr,
+		PipeName:         pipeName,
+		PipeURL:          pipeURL,
+		PipeBuildCreated: buildCreated,
+		FileChanges: func() []struct {
+			FileName    string
+			Status      string
+			StatusClass string
+			Committer   string
+			Reviewer    string
+			CommitHash  string
+			Title       string
+			Time        string
+		} {
+			var changes []struct {
+				FileName    string
+				Status      string
+				StatusClass string
+				Committer   string
+				Reviewer    string
+				CommitHash  string
+				Title       string
+				Time        string
+			}
+			for _, change := range fileChangesData {
+				changes = append(changes, struct {
+					FileName    string
+					Status      string
+					StatusClass string
+					Committer   string
+					Reviewer    string
+					CommitHash  string
+					Title       string
+					Time        string
+				}{
+					FileName:    string(change.FileName),
+					Status:      change.Status,
+					StatusClass: change.StatusClass,
+					Committer:   change.Committer,
+					Reviewer:    change.Reviewer,
+					CommitHash:  change.CommitHash,    // Added this line
+					Title:       change.Title,         // Added this line
+					Time:        change.Time.String(), // Updated this line
+				})
+			}
+			return changes
+		}(),
+	}
+
+	tmpl, err := template.New("report").Parse(htmlTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	var report strings.Builder
+	if err := tmpl.Execute(&report, data); err != nil {
+		return "", err
+	}
+
+	vars := map[string]string{
+		"HTML_TEMPLATE":      htmlTemplate,
+		"HTML_HEADER":        htmlHeader,
+		"HTML_STYLE":         htmlStyle,
+		"HTML_PREBODY":       htmlPreBody,
+		"HTML_BODY":          htmlBody,
+		"HTML_POSTBODY":      htmlPostBody,
+		"REPO_NAME":          repoName,
+		"BRANCH_NAME":        branchName,
+		"TRIGGER_TYPE":       triggerType,
+		"COMMITTERS":         committersStr,
+		"PIPE_NAME":          pipeName,
+		"PIPE_URL":           pipeURL,
+		"PIPE_BUILD_CREATED": buildCreated,
+		"FILE_CHANGES":       fmt.Sprintf("%v", fileChanges),
+	}
+
+	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))
+
+	if err != nil {
+		fmt.Println("Failed to write to .env:", err)
+	}
+
+	return report.String(), nil
+}
+
+func writeEnvFile(vars map[string]string, outputPath string) error {
+	// Create the directory if it doesn't exist
+	dir := filepath.Dir(outputPath)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		fmt.Println("Creating directory:", dir)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			fmt.Println("Error creating directory:", err)
+			return err
+		}
+	}
+
+	// Create the file if it doesn't exist
+	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
+		fmt.Println("Creating file:", outputPath)
+		if _, err := os.Create(outputPath); err != nil {
+			fmt.Println("Error creating file:", err)
+			return err
+		}
+	}
+
+	// Use godotenv.Write() to write the vars map to the specified file
+	err := godotenv.Write(vars, outputPath)
+	if err != nil {
+		fmt.Println("Error writing to .env file:", err)
+		return err
+	}
+	fmt.Println("Successfully wrote to .env file")
+
+	// Read the file contents
+	content, err := os.ReadFile(outputPath)
+	if err != nil {
+		fmt.Println("Error reading the .env file:", err)
+		return err
+	}
+
+	// Print the file contents
+	fmt.Println("File contents:")
+	fmt.Println(string(content))
+
+	return nil
+}

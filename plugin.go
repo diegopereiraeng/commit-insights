@@ -41,6 +41,8 @@ type (
 
 var plugin Plugin
 
+const lineBreak = "|---------------------------------------------"
+
 func getLastSuccessfulExecution(accID string, orgID string, projectID string, pipelineID string, stageID string, statusList []string, repoName string, branch string, buildType string) (string, string, models.Pipeline, error) {
 
 	url := "https://app.harness.io/pipeline/api/pipelines/execution/summary?page=0&size=1&accountIdentifier=" + accID + "Q&orgIdentifier=" + orgID + "&projectIdentifier=" + projectID + "&pipelineIdentifier=" + pipelineID + ""
@@ -103,11 +105,11 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 	var pipeline models.Pipeline
 	for _, content := range response.Data.Content {
 		fmt.Printf("| Found execution with status:\033[0m \033[1;32m%s\033[0m\n", content.Status)
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		fmt.Printf("| \033[1;36mPlan Execution ID:\033[0m \033[1;32m%s\033[0m\n", content.PlanExecutionId)
 		fmt.Printf("| \033[1;36mPipeline Name:\033[0m \033[1;32m%s\033[0m\n", content.Name)
 		fmt.Printf("| \033[1;36mPipe Status:\033[0m \033[1;32m%s\033[0m\n", content.Status)
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 
 		pipeline = models.Pipeline{
 			Name:        content.Name,
@@ -122,7 +124,7 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 		// content := response.Data.Content[0]
 		// foundSuccessfulExecution := false
 		for _, nodeInfo := range content.LayoutNodeMap {
-			fmt.Println("|---------------------------------------------")
+			fmt.Println(lineBreak)
 			fmt.Printf("| \033[1;36mNode Type:\033[0m \033[1;32m%s\033[0m\n", nodeInfo.NodeType)
 			fmt.Printf("| \033[1;36mNode Group:\033[0m \033[1;32m%s\033[0m\n", nodeInfo.NodeGroup)
 			fmt.Printf("| \033[1;36mNode Identifier:\033[0m \033[1;32m%s\033[0m\n", nodeInfo.NodeIdentifier)
@@ -134,7 +136,7 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 			fmt.Printf("| \033[1;36mEnd TS:\033[0m \033[1;32m%s\033[0m\n", time.Unix(int64(nodeInfo.EndTs/1000), 0))
 			fmt.Printf("| \033[1;36mFailure Info:\033[0m \033[1;32m%s\033[0m\n", nodeInfo.FailureInfo.Message)
 			fmt.Printf("| \033[1;36mEdge Layout List:\033[0m \033[1;32m%s\033[0m\n", nodeInfo.EdgeLayoutList)
-			fmt.Println("|---------------------------------------------")
+			fmt.Println(lineBreak)
 		}
 
 		// fmt.Printf("| \033[1;36mStage ID:\033[0m \033[1;32m%s\033[0m\n", stageID)
@@ -146,7 +148,7 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 		}
 		// fmt.Printf("Commits: %s\n", strings.Join(commiters, ", "))
 		fmt.Printf("| \033[1;36mNumber of commits:\033[0m \033[1;32m%d\033[0m\n", len(content.ModuleInfo.CI.CIExecutionInfoDTO.Branch.Commits))
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		// fmt.Printf("Last Commit SHA: %s\n", content.ModuleInfo.CI.CIExecutionInfoDTO.Branch.Commits[len(content.ModuleInfo.CI.CIExecutionInfoDTO.Branch.Commits)-1].ID)
 
 		if len(content.ModuleInfo.CI.CIExecutionInfoDTO.Branch.Commits) > 0 {
@@ -187,22 +189,22 @@ func (p *Plugin) Exec() error {
 	var buildType string = p.Config.BuildType
 	var commitID string = p.Config.CommitID
 
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mHarness Commit Insights\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Printf("| \033[1;36mAccount ID:\033[0m \033[1;32m%s\033[0m\n", accID)
 	fmt.Printf("| \033[1;36mOrg ID:\033[0m \033[1;32m%s\033[0m\n", orgID)
 	fmt.Printf("| \033[1;36mProject ID:\033[0m \033[1;32m%s\033[0m\n", projectID)
 	fmt.Printf("| \033[1;36mPipeline ID:\033[0m \033[1;32m%s\033[0m\n", pipelineID)
 	fmt.Printf("| \033[1;36mStage ID:\033[0m \033[1;32m%s\033[0m\n", stageID)
 	fmt.Printf("| \033[1;36mStatus List:\033[0m \033[1;32m%s\033[0m\n", statusList)
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Printf("| \033[1;36mRepo Name:\033[0m \033[1;32m%s\033[0m\n", repoName)
 	fmt.Printf("| \033[1;36mBranch:\033[0m \033[1;32m%s\033[0m\n", branch)
 	fmt.Printf("| \033[1;36mBuild Type:\033[0m \033[1;32m%s\033[0m\n", buildType)
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mSearching for last successful execution...\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 
 	// You can include a parameter here to select the source (payload or pipeline) for the commit hashes
 	// source := "payload" // or "pipeline"
@@ -214,9 +216,9 @@ func (p *Plugin) Exec() error {
 	var pipeline models.Pipeline
 
 	if source == "payload" {
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		fmt.Println("| \033[1;36mParsing payload...\033[0m")
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		// Read json fro file
 		payload, err := os.ReadFile("bitbucket/payload-bitbucket-harness.json")
 		if err != nil {
@@ -230,23 +232,23 @@ func (p *Plugin) Exec() error {
 		if err != nil {
 			log.Fatalf("Error parsing payload: %v", err)
 		}
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		fmt.Println("| Old Commit Hash: ", oldCommitHash)
 		fmt.Println("| New Commit Hash: ", newCommitHash)
 		fmt.Println("| Branch Name: ", branchName)
 		fmt.Println("| Repository Name: ", repoNamePayload)
 		fmt.Println("| Is Private: ", isPrivate)
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 
 	} else if source == "pipeline" {
 		branchName = branch
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		fmt.Println("| \033[1;36mGetting last successful execution...\033[0m")
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		fmt.Println("| Branch Name: ", branchName)
 		fmt.Println("| Repo Name: ", repoName)
 		fmt.Println("| Build Type: ", buildType)
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		// Get the old and new commit hashes from the pipeline
 
 		oldCommitHash, newCommitHash, pipeline, err = getLastSuccessfulExecution(accID, orgID, projectID, pipelineID, stageID, statusList, repoName, branch, buildType)
@@ -257,10 +259,10 @@ func (p *Plugin) Exec() error {
 			// return err
 
 		}
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		if pipeline.Status == "Success" {
 			fmt.Println("| \033[1;32mLast successful execution found\033[0m")
-			fmt.Println("|---------------------------------------------")
+			fmt.Println(lineBreak)
 			fmt.Printf("| \033[1;36mPipeline Name:\033[0m \033[1;32m%s\033[0m\n", pipeline.Name)
 			fmt.Printf("| \033[1;36mPipeline Status:\033[0m \033[1;32m%s\033[0m\n", pipeline.Status)
 			fmt.Printf("| \033[1;36mPipeline Started Time:\033[0m \033[1;32m%s\033[0m\n", pipeline.StartedTime)
@@ -268,10 +270,10 @@ func (p *Plugin) Exec() error {
 			fmt.Printf("| \033[1;36mPipeline Stage Count:\033[0m \033[1;32m%d\033[0m\n", pipeline.StageCount)
 			fmt.Printf("| \033[1;36mPipeline Step Count:\033[0m \033[1;32m%d\033[0m\n", pipeline.StepCount)
 			fmt.Printf("| \033[1;36mPipeline Message:\033[0m \033[1;32m%s\033[0m\n", pipeline.Message)
-			fmt.Println("|---------------------------------------------")
+			fmt.Println(lineBreak)
 		} else {
 			fmt.Println("| \033[1;31mLast successful execution not found\033[0m")
-			fmt.Println("|---------------------------------------------")
+			fmt.Println(lineBreak)
 		}
 
 	}
@@ -284,13 +286,13 @@ func (p *Plugin) Exec() error {
 	// fmt.Println("Commit Info: ", commitInfo)
 
 	fmt.Printf("| \033[1;33mFirst Commit SHA:\033[0m %s\n", oldCommitHash)
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Printf("| \033[1;33mLast Commit SHA:\033[0m %s\n", newCommitHash)
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	// git()
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mSearching for commit info...\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 
 	// result, err := GetCommitInfo("e7c79ef9dcaa60c41c88ea5417b977bffe0bdb9f", "HEAD")
 	result, err := GetCommitInfo(oldCommitHash, newCommitHash)
@@ -299,9 +301,9 @@ func (p *Plugin) Exec() error {
 		return err
 	}
 
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mGit Commit Info\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	for _, fileInfo := range result {
 		fmt.Printf("| \033[1;36mFile Name:\033[0m \033[1;32m%s\033[0m\n", fileInfo.FileName)
 		for _, commitInfo := range fileInfo.CommitDetails {
@@ -320,7 +322,7 @@ func (p *Plugin) Exec() error {
 			for _, change := range commitInfo.Changes {
 				fmt.Printf("| \033[1;36mFile Name:\033[0m \033[1;32m%s\033[0m | \033[1;36mStatus:\033[0m \033[1;32m%s\033[0m\n", change.FileName, change.Status)
 			}
-			fmt.Println("|---------------------------------------------")
+			fmt.Println(lineBreak)
 		}
 	}
 
@@ -431,11 +433,11 @@ func (p *Plugin) Exec() error {
 		return err
 	}
 
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mGit Commit Report\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	// fmt.Println(report)
-	// fmt.Println("|---------------------------------------------")
+	// fmt.Println(lineBreak)
 
 	//save to a html file
 	err = os.WriteFile("report.html", []byte(report), 0644)
@@ -443,19 +445,19 @@ func (p *Plugin) Exec() error {
 		return err
 	}
 
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mGit Commit Report saved to report.html\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mCommit Insights completed successfully\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 
 	return nil
 }
 
 func parsePipeline(jsonData []byte) (*models.Pipeline, error) {
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mParsing pipeline...\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 
 	var response models.Response
 	err := json.Unmarshal(jsonData, &response)
@@ -506,9 +508,9 @@ func parsePipeline(jsonData []byte) (*models.Pipeline, error) {
 		}
 	}
 
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mPipeline Info\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Printf("| \033[1;36mPipeline Name:\033[0m \033[1;32m%s\033[0m\n", pipeline.Name)
 	fmt.Printf("| \033[1;36mPipeline Status:\033[0m \033[1;32m%s\033[0m\n", pipeline.Status)
 	fmt.Printf("| \033[1;36mPipeline Started Time:\033[0m \033[1;32m%s\033[0m\n", pipeline.StartedTime)
@@ -516,22 +518,22 @@ func parsePipeline(jsonData []byte) (*models.Pipeline, error) {
 	fmt.Printf("| \033[1;36mPipeline Stage Count:\033[0m \033[1;32m%d\033[0m\n", pipeline.StageCount)
 	fmt.Printf("| \033[1;36mPipeline Step Count:\033[0m \033[1;32m%d\033[0m\n", pipeline.StepCount)
 	fmt.Printf("| \033[1;36mPipeline Message:\033[0m \033[1;32m%s\033[0m\n", pipeline.Message)
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mPipeline Stages\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	for _, stage := range pipeline.Stages {
 		fmt.Printf("| \033[1;36mStage Name:\033[0m \033[1;32m%s\033[0m\n", stage.Name)
 		fmt.Printf("| \033[1;36mStage Module:\033[0m \033[1;32m%s\033[0m\n", stage.Module)
 
 		// fmt.Printf("| \033[1;36mStage Step Count:\033[0m \033[1;32m%d\033[0m\n", len(stage.Steps))
-		fmt.Println("|---------------------------------------------")
+		fmt.Println(lineBreak)
 		// fmt.Println("| \033[1;36mStage Steps\033[0m")
-		// fmt.Println("|---------------------------------------------")
+		// fmt.Println(lineBreak)
 		// for _, step := range stage.Steps {
 		// 	fmt.Printf("| \033[1;36mStep Name:\033[0m \033[1;32m%s\033[0m\n", step.Name)
 		// 	fmt.Printf("| \033[1;36mStep Status:\033[0m \033[1;32m%s\033[0m\n", step.Status)
 		// 	fmt.Printf("| \033[1;36mStep Message:\033[0m \033[1;32m%s\033[0m\n", step.Message)
-		// 	fmt.Println("|---------------------------------------------")
+		// 	fmt.Println(lineBreak)
 		// }
 	}
 
@@ -542,9 +544,9 @@ func parsePipeline(jsonData []byte) (*models.Pipeline, error) {
 
 // func Parse models.PayloadSteps(jsonData []byte) (* models.PayloadSteps, error) {
 func ParsePayloadSteps() (*models.PayloadSteps, error) {
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mParsing payload...\033[0m")
-	fmt.Println("|---------------------------------------------")
+	fmt.Println(lineBreak)
 
 	file, err := os.Open("pipegraph.json")
 	if err != nil {

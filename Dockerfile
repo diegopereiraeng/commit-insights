@@ -12,7 +12,7 @@ RUN go env GOCACHE
 # Fetch dependencies
 RUN go mod download
 
-RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o harness-sonar
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o commit-insights 
 
 # Final stage
 FROM alpine:3.14

@@ -1,7 +1,10 @@
-FROM golang:1.20-alpine as build
+FROM golang:1.21-alpine as build
+# Install git for fetching dependencies
 RUN apk add --no-cache --update git
-RUN mkdir -p /go/src/github.com/diegopereiraeng/commit-insights
-WORKDIR /go/src/github.com/diegopereiraeng/commit-insights 
+
+# Set working directory inside the container
+WORKDIR /app
+
 COPY *.go ./
 COPY internal ./internal
 # Copy go mod and sum files

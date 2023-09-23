@@ -23,7 +23,7 @@ FROM alpine:3.14
 RUN apk --no-cache --update add curl unzip git
 
 # COPY --from=build /go/src/github.com/diegopereiraeng/commit-insights/commit-insights /bin/
-COPY commit-insights /bin/
+COPY binary/commit-insights /bin/
 WORKDIR /bin
 
 ENTRYPOINT /bin/commit-insights

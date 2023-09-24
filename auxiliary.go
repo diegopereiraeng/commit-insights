@@ -298,6 +298,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		"PIPE_URL":           pipeURL,
 		"PIPE_BUILD_CREATED": buildCreated,
 		"FILE_CHANGES":       fmt.Sprintf("%v", fileChanges),
+		"REPORT":             report.String(),
 	}
 
 	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))

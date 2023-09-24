@@ -66,6 +66,7 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
+		fmt.Println(err)
 		return "", "", models.Pipeline{}, err
 	}
 	req.Header.Add("Content-Type", "application/json")
@@ -73,6 +74,11 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 
 	res, err := client.Do(req)
 	if err != nil {
+		fmt.Println("Error finding last successful execution")
+		fmt.Println(url)
+		fmt.Println(payload)
+		fmt.Println(err)
+		fmt.Println("Status: ", req.Response.Status)
 		return "", "", models.Pipeline{}, err
 	}
 	defer res.Body.Close()

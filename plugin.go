@@ -71,6 +71,8 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("x-api-key", plugin.Config.HarnessSecret)
+	fmt.Println(url)
+	fmt.Println(payload)
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -81,12 +83,14 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 		fmt.Println("Status: ", req.Response.Status)
 		return "", "", models.Pipeline{}, err
 	}
-	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", "", models.Pipeline{}, err
 	}
+	fmt.Println(string(body))
+
+	defer res.Body.Close()
 
 	var response models.Response
 	err = json.Unmarshal(body, &response)

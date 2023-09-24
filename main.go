@@ -17,9 +17,9 @@ func main() {
 	app.Version = fmt.Sprintf("1.0.%s", build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:   "accID",
+			Name:   "acc_id",
 			Usage:  "e.g: 2_gVHyo9Qiu4dXvj-AcbC",
-			EnvVar: "HARNESS_ACCOUNT_ID,PLUGIN_ACC_ID",
+			EnvVar: "HARNESS_ACCOUNT_ID, PLUGIN_ACC_ID",
 		},
 		cli.StringFlag{
 			Name:   "orgID",
@@ -94,7 +94,7 @@ func run(c *cli.Context) {
 	}
 
 	config := Config{
-		AccID:            c.String("accID"),
+		AccID:            c.String("acc_id"),
 		OrgID:            c.String("orgID"),
 		ProjectID:        c.String("projectID"),
 		PipelineID:       c.String("pipelineID"),

@@ -263,6 +263,7 @@ func (p *Plugin) Exec() error {
 
 		oldCommitHash, newCommitHash, pipeline, err = getLastSuccessfulExecution(accID, orgID, projectID, pipelineID, stageID, statusList, repoName, branch, buildType)
 		if err != nil {
+			fmt.Println("Error getting last successful execution")
 			fmt.Println(err)
 			oldCommitHash = commitID
 			newCommitHash = commitID
@@ -305,7 +306,7 @@ func (p *Plugin) Exec() error {
 	fmt.Println(lineBreak)
 
 	// result, err := GetCommitInfo("e7c79ef9dcaa60c41c88ea5417b977bffe0bdb9f", "HEAD")
-	result, err := GetCommitInfo(oldCommitHash, newCommitHash)
+	result, err := GetCommitInfo(oldCommitHash, "HEAD")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -415,7 +416,7 @@ func (p *Plugin) Exec() error {
 
 	created, err := strconv.ParseInt(createdStr, 10, 64)
 	if err != nil {
-		fmt.Println("No CI_BUILD_CREATED env variable found")
+		fmt.Println("\033[33m| No CI_BUILD_CREATED env variable found\033[0m")
 		created = time.Now().Unix()
 	}
 

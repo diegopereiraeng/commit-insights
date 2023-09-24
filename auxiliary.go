@@ -304,7 +304,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))
 
 	if err != nil {
-		fmt.Println("Failed to write to .env:", err)
+		fmt.Printf("| \033[33m[WARNING] - Failed to write to .env: %v\033[0m\n", err)
 	}
 
 	return report.String(), nil
@@ -323,9 +323,9 @@ func writeEnvFile(vars map[string]string, outputPath string) error {
 
 	// Create the file if it doesn't exist
 	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
-		fmt.Println("Creating file:", outputPath)
+		fmt.Println("| Creating env file for Harness:", outputPath)
 		if _, err := os.Create(outputPath); err != nil {
-			fmt.Println("Error creating file:", err)
+			fmt.Println("| \033[33m[WARNING] - Error creating file: ", err, "\033[0m")
 			return err
 		}
 	}
@@ -333,7 +333,7 @@ func writeEnvFile(vars map[string]string, outputPath string) error {
 	// Use godotenv.Write() to write the vars map to the specified file
 	err := godotenv.Write(vars, outputPath)
 	if err != nil {
-		fmt.Println("Error writing to .env file:", err)
+		fmt.Println("[WARNING] \033[33m| Error writing to .env file: ", err, "\033[0m")
 		return err
 	}
 	fmt.Println("Successfully wrote to .env file")

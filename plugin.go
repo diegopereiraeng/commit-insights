@@ -45,7 +45,7 @@ const lineBreak = "|---------------------------------------------"
 
 func getLastSuccessfulExecution(accID string, orgID string, projectID string, pipelineID string, stageID string, statusList []string, repoName string, branch string, buildType string) (string, string, models.Pipeline, error) {
 
-	url := "https://app.harness.io/pipeline/api/pipelines/execution/summary?page=0&size=1&accountIdentifier=" + accID + "Q&orgIdentifier=" + orgID + "&projectIdentifier=" + projectID + "&pipelineIdentifier=" + pipelineID + ""
+	url := "https://app.harness.io/pipeline/api/pipelines/execution/summary?page=0&size=1&accountIdentifier=" + accID + "&orgIdentifier=" + orgID + "&projectIdentifier=" + projectID + "&pipelineIdentifier=" + pipelineID + ""
 	method := "POST"
 
 	var statusListJson string

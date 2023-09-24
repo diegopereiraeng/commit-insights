@@ -1,21 +1,21 @@
-FROM golang:1.21-alpine as build
-# Install git for fetching dependencies
-RUN apk add --no-cache --update git
+# FROM golang:1.21-alpine as build
+# # Install git for fetching dependencies
+# RUN apk add --no-cache --update git
 
-# Set working directory inside the container
-WORKDIR /app
+# # Set working directory inside the container
+# WORKDIR /app
 
-# Copy source code files
-COPY *.go ./
-COPY internal ./internal
-# Copy go mod and sum files
-COPY go.mod go.sum ./
+# # Copy source code files
+# COPY *.go ./
+# COPY internal ./internal
+# # Copy go mod and sum files
+# COPY go.mod go.sum ./
 
-# Fetch dependencies
-RUN go mod download
+# # Fetch dependencies
+# RUN go mod download
 
-# Build the application
-RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o commit-insights 
+# # Build the application
+# RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o commit-insights 
 
 # Final stage
 FROM alpine:3.14
@@ -24,8 +24,8 @@ FROM alpine:3.14
 RUN apk --no-cache --update add curl unzip git
 
 # Copy the built binary from the build stage
-COPY --from=build /app/commit-insights /bin/
-# COPY binary/commit-insights /bin/
+# COPY --from=build /app/commit-insights /bin/
+COPY binary/commit-insights /bin/
 
 # Set working directory
 WORKDIR /bin

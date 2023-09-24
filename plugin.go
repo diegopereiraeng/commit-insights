@@ -71,24 +71,30 @@ func getLastSuccessfulExecution(accID string, orgID string, projectID string, pi
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("x-api-key", plugin.Config.HarnessSecret)
-	fmt.Println(url)
-	fmt.Println(payload)
+	// fmt.Println(url)
+	// fmt.Println(payload)
 
 	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error finding last successful execution")
-		fmt.Println(url)
-		fmt.Println(payload)
-		fmt.Println(err)
+		fmt.Println("URL: ", url)
+		fmt.Println("Payload: ", payload)
+		fmt.Println("Error: ", err)
 		fmt.Println("Status: ", req.Response.Status)
 		return "", "", models.Pipeline{}, err
 	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
+		fmt.Println("Error parsing response")
+		fmt.Println("URL: ", url)
+		fmt.Println("Payload: ", payload)
+		fmt.Println("Response: ", body)
+		fmt.Println("Error: ", err)
+		fmt.Println("Status: ", req.Response.Status)
 		return "", "", models.Pipeline{}, err
 	}
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
 
 	defer res.Body.Close()
 
@@ -201,6 +207,8 @@ func (p *Plugin) Exec() error {
 
 	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mHarness Commit Insights\033[0m")
+	fmt.Println(lineBreak)
+	fmt.Println("| \033[1;36mDeveloped By:\033[0m \033[1;32mDiego Pereira\033[0m")
 	fmt.Println(lineBreak)
 	fmt.Printf("| \033[1;36mAccount ID:\033[0m \033[1;32m%s\033[0m\n", accID)
 	fmt.Printf("| \033[1;36mOrg ID:\033[0m \033[1;32m%s\033[0m\n", orgID)

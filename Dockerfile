@@ -26,4 +26,4 @@ COPY --from=build /go/src/github.com/diegopereiraeng/commit-insights/commit-insi
 # COPY binary/commit-insights /bin/
 WORKDIR /bin
 
-ENTRYPOINT /bin/commit-insights
+ENTRYPOINT ["/bin/commit-insights"]

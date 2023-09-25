@@ -44,7 +44,7 @@ const htmlStyle = `
 			overflow-x: auto;
 			overflow-y: auto;
 			max-width: 90%;
-			max-height: 100vh;
+			max-height: 90vh;
 			margin: 10px 20px;
 			padding: 20px;
 			height: fit-content;
@@ -56,7 +56,7 @@ const htmlStyle = `
 			overflow-x: auto;
 			overflow-y: auto;
 			max-width: 90%;
-			max-height: 90vh;
+			max-height: 100vh;
 			margin: 10px 20px;
 			padding: 20px;
 		}

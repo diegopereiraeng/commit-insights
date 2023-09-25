@@ -47,9 +47,7 @@ const htmlStyle = `
 			max-height: 90vh;
 			margin: 10px 20px;
 			padding: 20px;
-		}
-		.super-container {
-			min-height: 500px;
+			height: fit-content;
 		}
 		.section {
 			background-color: #fff;
@@ -58,7 +56,7 @@ const htmlStyle = `
 			overflow-x: auto;
 			overflow-y: auto;
 			max-width: 90%;
-			max-height: 90vh;
+			max-height: 100vh;
 			margin: 10px 20px;
 			padding: 20px;
 		}

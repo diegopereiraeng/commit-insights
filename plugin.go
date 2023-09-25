@@ -467,6 +467,10 @@ func (p *Plugin) Exec() error {
 	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mGit Commit Report saved to report.html\033[0m")
 	fmt.Println(lineBreak)
+	fmt.Println("| \033[1;36mDeveloped by: \033[0m \033[1;32mDiego Pereira\033[0m")
+	fmt.Println("| \033[1;36mGithub: \033[0m \033[1;32mhttps://github.com/diegopereiraeng\033[0m")
+	fmt.Println("| \033[1;36mLinkedIn: \033[0m \033[1;32mhttps://www.linkedin.com/in/diego-pereira-eng\033[0m")
+	fmt.Println(lineBreak)
 	fmt.Println("| \033[1;36mCommit Insights completed successfully\033[0m")
 	fmt.Println(lineBreak)
 

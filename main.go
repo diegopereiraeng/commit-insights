@@ -11,8 +11,8 @@ var build = "1" // build number set at compile-time
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "Harness-JUnit-Converter"
-	app.Usage = "CLI tool to convert JSON fields to JUnit XML format."
+	app.Name = "Commit-Insights-Plugin"
+	app.Usage = "CLI tool to ingest commit insights into Harness"
 	app.Action = run
 	app.Version = fmt.Sprintf("1.0.%s", build)
 	app.Flags = []cli.Flag{

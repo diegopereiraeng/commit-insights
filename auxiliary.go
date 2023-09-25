@@ -24,21 +24,40 @@ const htmlStyle = `
 			font-family: Arial, sans-serif;
 			margin: 0;
 			background-color: #f0f0f0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 		}
 		.header {
-			background-color: #0B5ED7; 
-			color: white; 
-			padding: 20px; 
-			text-align: center; 
-			font-size: 24px;
-			border-bottom: 2px solid #fff;
-		} 
-		.section {
+			background-color: #00ABE3;
+			color: white;
 			padding: 20px;
+			text-align: center;
+			font-size: 20px;
+			border-radius: 10px 10px 0 0;
+			margin: -20px -20px 20px -20px;
+		}
+		.super-container {
 			background-color: #fff;
-			margin: 10px 20px;
-			border-radius: 8px;
+			border-radius: 10px;
 			box-shadow: 0 0 10px rgba(0,0,0,0.1);
+			overflow-x: auto;
+			overflow-y: auto;
+			max-width: 90%;
+			max-height: 90vh;
+			margin: 10px 20px;
+			padding: 20px;
+		}
+		.section {
+			background-color: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.1);
+			overflow-x: auto;
+			overflow-y: auto;
+			max-width: 90%;
+			max-height: 90vh;
+			margin: 10px 20px;
+			padding: 20px;
 		}
 		.green {
 			background-color: rgba(40, 167, 69, 0.3);
@@ -49,19 +68,23 @@ const htmlStyle = `
 		.orange {
 			background-color: rgba(255, 165, 0, 0.3);
 		}
+
 		table {
-			width: 100%; 
-			border-collapse: collapse; 
+			width: 100%;
+			border-collapse: collapse;
 			margin-bottom: 20px;
+			border: 1px solid #ccc;
+			
 		}
 		th, td {
-			border: 1px solid #ccc; 
-			padding: 8px; 
-			text-align: left; 
+			border: 1px solid #ccc;
+			padding: 8px;
+			text-align: left;
 		}
 		th {
 			background-color: #f8f8f8;
 		}
+
 `
 
 const htmlPreBody = `
@@ -70,6 +93,7 @@ const htmlPreBody = `
 <body>
 `
 const htmlBody = `
+<div class="super-container">
 	<div class="header">
 		Commit Insights Report
 	</div>
@@ -87,7 +111,7 @@ const htmlBody = `
 		<strong>Pipeline URL:</strong> <a href={{.PipeURL}}>Harness Execution Link</a>
 	</div>
 	<div class="section">
-		<strong>File Changes:</strong>
+		<strong>File Changes:</strong><p>
 		<table>
 			<tr>
 				<th>Committer/Reviewer</th>
@@ -109,6 +133,7 @@ const htmlBody = `
 			{{end}}
 		</table>
 	</div>
+</div>
 `
 const htmlPostBody = `
 </body>

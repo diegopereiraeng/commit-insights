@@ -35,8 +35,12 @@ type FileInfo struct {
 
 func GetCommitInfo(olderCommitHash string, newerCommitHash string) ([]FileInfo, error) {
 	fmt.Println("| \033[1;36mGetting commit info...\033[0m")
-	//
-	cmd := exec.Command("git", "log", "--pretty=format:%H;%an;%ae;%aN;%at;%cN;%cE;%d;%s;%b;%p", "--name-status", olderCommitHash+"^.."+newerCommitHash)
+	var commitSearch string = olderCommitHash + "^.." + newerCommitHash
+	if olderCommitHash == newerCommitHash {
+		commitSearch = olderCommitHash + ".." + newerCommitHash
+	}
+
+	cmd := exec.Command("git", "log", "--pretty=format:%H;%an;%ae;%aN;%at;%cN;%cE;%d;%s;%b;%p", "--name-status", commitSearch)
 	fmt.Println("| \033[1;36mCommand:\033[0m " + cmd.String())
 
 	var out bytes.Buffer

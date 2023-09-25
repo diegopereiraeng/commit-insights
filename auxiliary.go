@@ -48,6 +48,9 @@ const htmlStyle = `
 			margin: 10px 20px;
 			padding: 20px;
 		}
+		.super-container {
+			min-height: 500px;
+		}
 		.section {
 			background-color: #fff;
 			border-radius: 10px;

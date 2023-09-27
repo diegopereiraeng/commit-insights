@@ -18,11 +18,13 @@ Commit-Insights is a tool that provides insights into your codebase by analyzing
 ## Installation
 
 1. Clone the repository
+
     ```bash
     git clone https://github.com/diegopereiraeng/commit-insights.git
     ```
 
 2. Navigate to the project directory
+
     ```bash
     cd commit-insights
     ```
@@ -30,11 +32,13 @@ Commit-Insights is a tool that provides insights into your codebase by analyzing
 ## Run Locally
 
 1. Download the Go modules required for the project.
+
     ```bash
     go mod download
     ```
 
 2. Build the project to generate the binary.
+
     ```bash
     go build -o commit-insights
     ```

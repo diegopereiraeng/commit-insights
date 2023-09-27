@@ -80,8 +80,8 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "harness_pipe_execution_url",
-			Usage:  "Provide a custom Harness execution URL, or it gonna take the current pipeline execution URL",
-			EnvVar: "CI_BUILD_LINK, PLUGIN_HARNESS_SECRET",
+			Usage:  "Provide a custom Harness execution URL, or it gonna take the current pipeline execution URL (Optional)",
+			EnvVar: "CI_BUILD_LINK, PLUGIN_HARNESS_PIPE_EXECUTION_URL",
 		},
 	}
 	app.Run(os.Args)

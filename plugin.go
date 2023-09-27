@@ -243,9 +243,7 @@ func (p *Plugin) Exec() error {
 			log.Fatalf("Error reading file: %v", err)
 		}
 
-		// Get the old and new commit hashes from the payload
-		// payload := `...` // Your JSON payload here
-
+		// Get the old and new commit hashes from the payload/pipeline
 		oldCommitHash, newCommitHash, branchName, repoNamePayload, isPrivate, err = ParsePayload(payload)
 		if err != nil {
 			log.Fatalf("Error parsing payload: %v", err)

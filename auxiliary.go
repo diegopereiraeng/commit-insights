@@ -148,6 +148,7 @@ type reportData struct {
 	BranchName       string
 	TriggerType      string
 	Committers       string
+	CommittersEmail  string
 	PipeName         string
 	PipeURL          string
 	PipeBuildCreated string
@@ -163,7 +164,7 @@ type reportData struct {
 	}
 }
 
-func GenerateReport(repoName string, branchName string, triggerType string, committers []string, pipeName string, pipeURL string, fileChanges []struct {
+func GenerateReport(repoName string, branchName string, triggerType string, committers []string, commitersEmail []string, pipeName string, pipeURL string, fileChanges []struct {
 	FileName   template.HTML
 	Status     string
 	Committer  string
@@ -175,6 +176,10 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 	var committersStr string
 	if len(committers) > 0 {
 		committersStr = strings.Join(committers, ", ")
+	}
+	var committersEmailStr string
+	if len(commitersEmail) > 0 {
+		committersEmailStr = strings.Join(commitersEmail, ", ")
 	}
 
 	var fileChangesData []struct {
@@ -200,7 +205,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 			statusText = "Deleted"
 			statusClass = "red"
 		default:
-			statusText = "Unknown"
+			statusText = change.Status
 		}
 		//convert epoch 1694299436 format to human readable format
 		// timeInt, err := strconv.Atoi(change.Time)
@@ -251,6 +256,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		BranchName:       branchName,
 		TriggerType:      triggerType,
 		Committers:       committersStr,
+		CommittersEmail:  committersEmailStr,
 		PipeName:         pipeName,
 		PipeURL:          pipeURL,
 		PipeBuildCreated: buildCreated,
@@ -320,6 +326,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		"BRANCH_NAME":        branchName,
 		"TRIGGER_TYPE":       triggerType,
 		"COMMITTERS":         committersStr,
+		"COMMITTERS_EMAIL":   committersEmailStr,
 		"PIPE_NAME":          pipeName,
 		"PIPE_URL":           pipeURL,
 		"PIPE_BUILD_CREATED": buildCreated,

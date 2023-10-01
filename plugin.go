@@ -445,7 +445,7 @@ func (p *Plugin) Exec() error {
 
 	// fmt.Println("Pipe URL: " + p.Config.PipeExecutionURL)
 	// Call the GenerateReport function
-	report, err := GenerateReport(repoName, branchName, buildType, committersNameList, pipeline.Name, p.Config.PipeExecutionURL, fileChanges, createdStr)
+	report, err := GenerateReport(repoName, branchName, buildType, committersNameList, committersList, pipeline.Name, p.Config.PipeExecutionURL, fileChanges, createdStr)
 	if err != nil {
 		return err
 	}

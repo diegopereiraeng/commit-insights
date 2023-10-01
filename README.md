@@ -1,4 +1,3 @@
-
 # Commit-Insights
 
 Commit-Insights is a tool that provides insights into your codebase by analyzing Git commit history and harnessing data. It's designed to work as a plugin in your CI/CD pipeline.

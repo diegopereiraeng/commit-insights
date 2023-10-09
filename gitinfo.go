@@ -44,14 +44,25 @@ func GetCommitInfo(olderCommitHash string, newerCommitHash string) ([]FileInfo, 
 		commitSearch = olderCommitHash + "^.." + newerCommitHash
 	}
 
+	// Run git status first
+	statusCmd := exec.Command("git", "status")
+	statusOut, statusErr := statusCmd.Output()
+	if statusErr != nil {
+		fmt.Println("| \033[1;31mError checking git status:\033[0m", statusErr)
+		return nil, statusErr
+	}
+	fmt.Println("| \033[1;36mGit Status:\033[0m\n", string(statusOut))
+
 	cmd := exec.Command("git", "log", "--pretty=format:%H;%an;%ae;%aN;%at;%cN;%cE;%d;%s;%b;%p", "--name-status", commitSearch)
 	fmt.Println("| \033[1;36mCommand:\033[0m " + cmd.String())
 
-	var out bytes.Buffer
+	var out, stderr bytes.Buffer
 	cmd.Stdout = &out
+	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println("| \033[1;31mError executing command:\033[0m", err)
+		fmt.Println("| \033[1;31mGit error details:\033[0m", stderr.String())
 		return nil, err
 	}
 

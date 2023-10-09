@@ -36,6 +36,8 @@ type FileInfo struct {
 func GetCommitInfo(olderCommitHash string, newerCommitHash string) ([]FileInfo, error) {
 	fmt.Println("| \033[1;36mGetting commit info...\033[0m")
 	var commitSearch string
+	olderCommitHash = strings.TrimSpace(olderCommitHash)
+	newerCommitHash = strings.TrimSpace(newerCommitHash)
 	if olderCommitHash == newerCommitHash {
 		commitSearch = olderCommitHash
 	} else {

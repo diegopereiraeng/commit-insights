@@ -312,7 +312,7 @@ func (p *Plugin) Exec() error {
 	fmt.Println(lineBreak)
 
 	// result, err := GetCommitInfo("e7c79ef9dcaa60c41c88ea5417b977bffe0bdb9f", "HEAD")
-	result, err := GetCommitInfo(oldCommitHash, "HEAD")
+	result, err := GetCommitInfo(oldCommitHash, newCommitHash)
 	if err != nil {
 		fmt.Println(err)
 		return err

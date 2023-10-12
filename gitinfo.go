@@ -34,6 +34,20 @@ type FileInfo struct {
 }
 
 func GetCommitInfo(olderCommitHash string, newerCommitHash string) ([]FileInfo, error) {
+
+	// Check if git is installed and configure it
+	if _, err := exec.LookPath("git"); err == nil {
+		cmd := exec.Command("sh", "-c", "git config --global --add safe.directory '*' || true")
+		if err := cmd.Run(); err != nil {
+			fmt.Println("| \033[1;31mError configuring git:\033[0m", err)
+			return nil, err
+		}
+		fmt.Println("| \033[1;36mGit is installed and configured.\033[0m")
+	} else {
+		fmt.Println("| \033[1;31mGit is not installed on the system.\033[0m")
+		return nil, err
+	}
+
 	fmt.Println("| \033[1;36mGetting commit info...\033[0m")
 	var commitSearch string
 	olderCommitHash = strings.TrimSpace(olderCommitHash)

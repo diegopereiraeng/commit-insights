@@ -58,8 +58,8 @@ func GetCommitInfo(olderCommitHash string, newerCommitHash string) ([]FileInfo, 
 		commitSearch = olderCommitHash + "^.." + newerCommitHash
 	}
 
-	// Run git status first
-	statusCmd := exec.Command("git", "status")
+	// Run git status using sh
+	statusCmd := exec.Command("sh", "-c", "git status")
 	statusOut, statusErr := statusCmd.Output()
 	if statusErr != nil {
 		fmt.Println("| \033[1;31mError checking git status:\033[0m", statusErr)

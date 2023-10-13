@@ -345,7 +345,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		"PIPE_URL":           pipeURL,
 		"PIPE_BUILD_CREATED": buildCreated,
 		"FILE_CHANGES":       fmt.Sprintf("%v", fileChanges),
-		"REPORT":             inlinedHtml,
+		"REPORT":             strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(report, "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", ""),
 	}
 
 	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))

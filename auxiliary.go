@@ -326,6 +326,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		fmt.Println("Error inlining CSS:", err)
 		return "", err
 	}
+	inlinedHtml = strings.Replace(inlinedHtml, "\n", "", -1)
 	fmt.Println(inlinedHtml)
 
 	vars := map[string]string{

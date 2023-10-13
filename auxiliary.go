@@ -327,7 +327,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		return "", err
 	}
 	// inlinedHtml = strings.ReplaceAll(inlinedHtml, "\n", "")
-	fmt.Println(inlinedHtml)
+	// fmt.Println(inlinedHtml)
 
 	vars := map[string]string{
 		"HTML_TEMPLATE":      htmlTemplate,
@@ -346,6 +346,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		"PIPE_BUILD_CREATED": buildCreated,
 		"FILE_CHANGES":       fmt.Sprintf("%v", fileChanges),
 		"REPORT":             strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(report.String(), "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", ""),
+		"REPORT2":            strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(inlinedHtml, "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", ""),
 	}
 
 	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))

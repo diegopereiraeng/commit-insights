@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/vanng822/go-premailer/premailer"
 )
 
 const htmlHeader = `
@@ -315,6 +316,18 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		return "", err
 	}
 
+	p, err := premailer.NewPremailerFromString(report.String(), premailer.NewOptions())
+	if err != nil {
+		return "", err
+	}
+
+	inlinedHtml, err := p.Transform()
+	if err != nil {
+		fmt.Println("Error inlining CSS:", err)
+		return "", err
+	}
+	fmt.Println(inlinedHtml)
+
 	vars := map[string]string{
 		"HTML_TEMPLATE":      htmlTemplate,
 		"HTML_HEADER":        htmlHeader,
@@ -331,7 +344,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		"PIPE_URL":           pipeURL,
 		"PIPE_BUILD_CREATED": buildCreated,
 		"FILE_CHANGES":       fmt.Sprintf("%v", fileChanges),
-		"REPORT":             report.String(),
+		"REPORT":             inlinedHtml,
 	}
 
 	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))
@@ -340,7 +353,7 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		fmt.Printf("| \033[33m[WARNING] - Failed to write to .env: %v\033[0m\n", err)
 	}
 
-	return report.String(), nil
+	return inlinedHtml, nil
 }
 
 func writeEnvFile(vars map[string]string, outputPath string) error {

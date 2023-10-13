@@ -326,8 +326,17 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		fmt.Println("Error inlining CSS:", err)
 		return "", err
 	}
-	// inlinedHtml = strings.ReplaceAll(inlinedHtml, "\n", "")
-	// fmt.Println(inlinedHtml)
+	// 1. Calculate the length and the breakpoints for the inlined HTML string
+	totalLength := len(inlinedHtml)
+	partLength := totalLength / 3
+
+	// 2. Slice the string into three approximately equal parts
+	part1 := inlinedHtml[:partLength]
+	part1 = strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(part1, "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", "")
+	part2 := inlinedHtml[partLength : 2*partLength]
+	part2 = strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(part2, "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", "")
+	part3 := inlinedHtml[2*partLength:]
+	part3 = strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(part3, "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", "")
 
 	vars := map[string]string{
 		"HTML_TEMPLATE":      htmlTemplate,
@@ -346,7 +355,9 @@ func GenerateReport(repoName string, branchName string, triggerType string, comm
 		"PIPE_BUILD_CREATED": buildCreated,
 		"FILE_CHANGES":       fmt.Sprintf("%v", fileChanges),
 		"REPORT":             strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(report.String(), "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", ""),
-		"REPORT2":            strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(inlinedHtml, "\n", ""), "	", ""), "		", ""), "<!DOCTYPE html>", ""),
+		"REPORT_PART1":       part1,
+		"REPORT_PART2":       part2,
+		"REPORT_PART3":       part3,
 	}
 
 	err = writeEnvFile(vars, os.Getenv("DRONE_OUTPUT"))

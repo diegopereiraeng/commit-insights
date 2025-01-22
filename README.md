@@ -54,7 +54,7 @@ You can run the tool using the following command as an example:
 
 Here is a sample example of how you can use the Commit-Insights in a pipeline:
 
-\`\`\`yaml
+```yaml
 - step:
     type: Plugin
     name: Commit-Insights
@@ -65,7 +65,7 @@ Here is a sample example of how you can use the Commit-Insights in a pipeline:
       settings:
         harness_secret: <+secrets.getValue("harnesssatokenplugin")>
       imagePullPolicy: Always
-\`\`\`
+```
 
 ## Contributing
 
